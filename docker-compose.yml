@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  stock-service:
+    build: ./stock_service
+    ports:
+      - "8082:8082"
+    networks:
+      - shop-net
+
+  reco-service:
+    build: ./reco_service
+    ports:
+      - "8083:8083"
+    networks:
+      - shop-net
+
+  app:
+    build: ./app
+    ports:
+      - "8080:8080"
+    environment:
+      - STOCK_URL=http://stock-service:8082
+      - RECO_URL=http://reco-service:8083
+    depends_on:
+      - stock-service
+      - reco-service
+    networks:
+      - shop-net
+
+networks:
+  shop-net:
+    driver: bridge
+    
